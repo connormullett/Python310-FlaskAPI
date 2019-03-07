@@ -1,8 +1,9 @@
 
-from marshmallow import fields, schema
 import datetime
-from . import db
+from marshmallow import fields, schema
 
+from . import db
+from ..app import bcrypt
 
 class UserModel(db.Model):
     '''
@@ -36,6 +37,9 @@ class UserModel(db.Model):
 
     def __repr__(self):
         return f'<id {self.id}>'
+
+    def _generate_hash(self, password):
+        return bcrypt.generate_password_hash(password, rounds=10).decode('utf-8')
 
     def delete(self):
         '''deletes row from db'''
