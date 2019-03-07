@@ -22,16 +22,20 @@ class UserModel(db.Model):
     password = db.Column(db.String(128), nullable=False)
     created_at = db.Column(db.DateTime)
     modified_at = db.Column(db.DateTime)
+    # foreign key
+    blogposts = db.relationship('BlogPostModel', backref='users', lazy=True)
 
     def __init__(self, data):
         '''
         takes in a json request body
         and parses to instance attributes
+        password gets generated into a bcrypt
+        hash before storage
         '''
 
         self.name = data.get('name')
         self.email = data.get('email')
-        self.password = data.get('password')
+        self.password = self._generate_hash(data.get('password'))
         self.created_at = datetime.datetime.utcnow()
         self.modified_at = datetime.datetime.utcnow()
 
@@ -40,6 +44,9 @@ class UserModel(db.Model):
 
     def _generate_hash(self, password):
         return bcrypt.generate_password_hash(password, rounds=10).decode('utf-8')
+
+    def check_hash(self, password):
+        return bcrypt.check_password_hash(self.password, password)
 
     def delete(self):
         '''deletes row from db'''
@@ -53,6 +60,8 @@ class UserModel(db.Model):
     def update(self, data):
         '''takes in data to modify model'''
         for key, item in data.items():
+            if key == 'password':
+                self.password = self._generate_hash(value)
             setattr(self, key, item)
         self.modified_at = datetime.datetime.utcnow()
         db.session.commit()
@@ -64,3 +73,17 @@ class UserModel(db.Model):
     @staticmethod
     def get_one_user(id):
         return UserModel.query.get(id)
+
+
+class UserSchema(Schema):
+    '''
+    Schema for User Models
+    '''
+
+    id = fields.Int(dump_only=True)
+    name = fields.Str(required=True)
+    email = fields.Email(required=True)
+    password = fields.Str(required=True)
+    created_at = fields.DateTime(dump_only=True)
+    modified_at = fields.DateTime(dump_only=True)
+    blogposts = fields.Nested(BlogPostSchema, many=True)
