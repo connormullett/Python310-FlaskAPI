@@ -32,6 +32,29 @@ def create():
     return custom_response(data, 201)
 
 
+@blogpost_api.route('/<int:id>')
+@Auth.auth_required
+def delete(id):
+    '''
+    Deletes a blog post
+    only owner of post
+    can  delete the post
+    '''
+
+    post = BlogPostModel.get_one_blogpost(id)
+
+    if not post:
+        return custom_response({'error': 'post not found'}, 404)
+
+    data = blogpost_schema.dump(post).data
+    if data.get('owner_id') != g.user.get('id'):
+        return custom_response({'error': 'permission denied'}, 400)
+
+    post.delete()
+    return custom_response({'message': 'deleted'}, 204)
+
+
+
 @blogpost_api.route('/', methods=['GET'])
 @Auth.auth_required
 def get_all():
