@@ -44,6 +44,24 @@ def get_all():
     return custom_response(data, 200)
 
 
+@blogpost_api.route('/<int:blogpost_id>')
+@Auth.auth_required
+def get_one(blogpost_id):
+    '''
+    Get one blog post by Id
+    if user is verified
+    '''
+
+    post = BlogPostModel.get_one_blogpost(blogpost_id)
+
+    if not post:
+        return custom_response({'error': 'post not found'}, 404)
+
+    data = blogpost_schema.dump(post).data
+
+    return custom_response(data, 200)
+
+
 def custom_response(res, status_code):
     '''
     creates custom responses to
