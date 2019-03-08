@@ -2,6 +2,8 @@
 from . import db
 from datetime import datetime
 
+from marshmallow import fields, Schema
+
 
 class BlogPostModel(db.Model):
     '''
