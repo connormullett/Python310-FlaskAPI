@@ -32,6 +32,18 @@ def create():
     return custom_response(data, 201)
 
 
+@blogpost_api.route('/', methods=['GET'])
+@Auth.auth_required
+def get_all():
+    '''
+    returns all blog BlogPostSchema
+    '''
+
+    posts = BlogPostModel.get_all_blogposts()
+    data = blogpost_schema.dump(posts, many=True).data
+    return custom_response(data, 200)
+
+
 def custom_response(res, status_code):
     '''
     creates custom responses to
