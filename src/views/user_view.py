@@ -37,12 +37,54 @@ def create():
     return custom_response({'token': token}, 201)
 
 
+@user_api.route('/me', methods=['DELETE'])
+@Auth.auth_required
+def delete():
+    '''
+    Delete the user model
+    if authenticated
+    '''
+    user = UserModel.get_one_user(g.user.get('id'))
+    user.delete()
+    return custom_response({'message': 'deleted'}, 204)
+
+
 @user_api.route('/', methods=['GET'])
 @Auth.auth_required
 def get_all():
+    '''
+    Get all users
+    '''
     users = UserModel.get_all_users()
     ser_users = user_schema.dump(users, many=True).data
     return custom_response(ser_users, 200)
+
+
+@user_api.route('/<int:user_id>', methods=['GET'])
+@Auth.auth_required
+def get_user(user_id):
+    '''
+    Get a single user
+    '''
+    user = UserModel.get_one_user(user_id)
+    if not user:
+        return custom_response({'error': 'user not found'}, 404)
+
+    ser_user = user_schema.dump(user).data
+    return custom_response(ser_user, 200)
+
+
+@user_api.route('/me', methods=['GET'])
+@Auth.auth_required
+def get_me():
+    '''
+    Get owners user information (me)
+    '''
+
+    user = UserModel.get_one_user(g.user.get('id'))
+    ser_user = user_schema.dump(user).data
+    return custom_response(ser_user, 200)
+
 
 @user_api.route('/login', methods=['POST'])
 def login():
@@ -75,13 +117,32 @@ def login():
     return custom_response({'token': token}, 200)
 
 
+@user_api.route('/me', methods=['PUT'])
+@Auth.auth_required
+def update():
+    '''
+    Allows owner of profile (me)
+    to update the user information
+    '''
+
+    req_data = request.get_json()
+    data, error = user_schema.load(req_data, partial=True)
+    if error:
+        return custom_response(error, 400)
+
+    user = UserModel.get_one_user(g.user.get('id'))
+    user.update(data)
+    ser_user = user_schema.dump(user).data
+    return custom_response(ser_user, 200)
+
+
 def custom_response(res, status_code):
     '''
     Creates a custom json response
     for proper status messages
     '''
 
-    return response(
+    return Response(
         mimetype='application/json',
         response=json.dumps(res),
         status=status_code
