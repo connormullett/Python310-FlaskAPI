@@ -1,4 +1,6 @@
 
+import json
+
 from flask import request, g, Blueprint, json, Response
 from ..shared.authentication import Auth
 from ..models.blog_post import BlogPostModel, BlogPostSchema
@@ -16,11 +18,11 @@ def create():
     '''
 
     req_data = request.get_json()
-    req_data['owner_id'] = g.user.get('id')
-    print(g.user.get('id'))
+    req_data['owner_id'] = g.user['id']
     data, error = blogpost_schema.load(req_data)
 
     if error:
+        print(error)
         return custom_response(error, 404)
 
     post = BlogPostModel(data)

@@ -16,7 +16,7 @@ class UserModel(db.Model):
     the database columns
     '''
 
-    __tablename__ = 'users'
+    __tablename__ = 'user'
 
     id = db.Column(db.Integer, primary_key=True)
     name = db.Column(db.String(128), nullable=False)
