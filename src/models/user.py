@@ -53,6 +53,7 @@ class UserModel(db.Model):
     def delete(self):
         '''deletes row from db'''
         db.session.delete(self)
+        db.session.commit()
 
     def save(self):
         '''saves current state of model to db'''
@@ -72,7 +73,7 @@ class UserModel(db.Model):
     def get_all_users():
         return UserModel.query.all()
 
-    @staticmethods
+    @staticmethod
     def get_user_by_email(value):
         return UserModel.query.filter_by(email=value).first()
 

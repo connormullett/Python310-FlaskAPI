@@ -1,21 +1,20 @@
 
-from flask import request, json, Response, Blueprint
+from flask import request, json, Response, Blueprint, g
 from ..models.user import UserModel, UserSchema
-from ..share.Authentication import Auth
+from ..shared.authentication import Auth
 
 
- user_api = Blueprint('users', __name__)
- user_schema = UserSchema()
+user_api = Blueprint('users', __name__)
+user_schema = UserSchema()
 
 
-@user_api.route('/', mehtods=['POST'])
-@Auth.auth_required
+@user_api.route('/', methods=['POST'])
 def create():
     '''
     Create endpoint for user api
     '''
 
-    req_data = requests.get_json()
+    req_data = request.get_json()
     data, error = user_schema.load(req_data)
 
     if error:
@@ -23,7 +22,7 @@ def create():
 
     # check if user already exists in db
     user_in_db = UserModel.get_user_by_email(data.get('email'))
-    if user in db:
+    if user_in_db:
         message = {'error': 'User already exists, please supply another email address'}
         return custom_response(message, 400)
 
@@ -105,7 +104,7 @@ def login():
     user = UserModel.get_user_by_email(data.get('email'))
 
     if not user:
-        return custom_response({'error': 'invalid credentials'})
+        return custom_response({'error': 'invalid credentials'}, 400)
 
     if not user.check_hash(data.get('password')):
         return custom_response({'error': 'invalid credentials'})

@@ -3,6 +3,8 @@ import jwt
 import os
 import datetime
 
+from functools import wraps
+
 from flask import json, Response, request, g
 from ..models.user import UserModel
 
@@ -40,7 +42,7 @@ class Auth:
                 )
 
             user_id = data['data']['user_id']
-            check_user = UserModel.get_one_user(user_id))
+            check_user = UserModel.get_one_user(user_id)
 
             if not check_user:
                 return Response(
@@ -70,7 +72,7 @@ class Auth:
             re['data'] = {'user_id': payload['sub']}
             return re
         except jwt.ExpiredSignatureError as el:
-            re=['error'] = {'message': 'invalid token'}
+            re['error'] = {'message': 'invalid token'}
             return re
 
     @staticmethod
