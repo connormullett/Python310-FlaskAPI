@@ -1,5 +1,5 @@
 
-from flask import Flask
+from flask import Flask, jsonify
 
 from .config import app_config
 from .models import db, bcrypt
@@ -22,5 +22,9 @@ def create_app(env_name='development'):
 
     bcrypt.init_app(app)
     db.init_app(app)
+
+    @app.route('/', methods=['GET'])
+    def health_check():
+        return jsonify({'status': 'success'}), 200
 
     return app
