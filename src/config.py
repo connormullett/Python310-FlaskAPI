@@ -3,19 +3,13 @@ import os
 
 
 class Development(object):
-    '''
-    Develepment Environment config
-    '''
     DEBUG = True
     TESTING = False
     JWT_SECRET_KEY = os.getenv('JWT_SECRET_KEY')
-    SQLALCHEMY_DATABASE_URI = os.getenv('DATABASE_URL')
+    SQLALCHEMY_DATABASE_URI = os.getenv('RDS_DB_NAME')
 
 
 class Production(object):
-    '''
-    Production Environment Config
-    '''
 
     DEBUG = False
     TESTING = False

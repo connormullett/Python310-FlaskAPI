@@ -68,13 +68,11 @@ class BlogPostModel(db.Model):
         return BlogPostModel.query.get(id)
 
 
+# models/blog_post.py
 class BlogPostSchema(Schema):
-  """
-  Blogpost Schema
-  """
-  id = fields.Int(dump_only=True)
-  title = fields.Str(required=True)
-  content = fields.Str(required=True)
-  owner_id = fields.Int(required=True)
-  created_at = fields.DateTime(dump_only=True)
-  modified_at = fields.DateTime(dump_only=True)
+    id = fields.Int(dump_only=True)
+    title = fields.Str(required=True)
+    content = fields.Str(required=True)
+    owner_id = fields.Int(required=True)
+    created_at = fields.DateTime(dump_only=True)
+    modified_at = fields.DateTime(dump_only=True)

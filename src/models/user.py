@@ -7,15 +7,8 @@ from ..app import bcrypt
 
 from .blog_post import BlogPostSchema
 
-class UserModel(db.Model):
-    '''
-    User Model
-    __tablename__ defines the
-    database tables name on migration
-    class attributes are for declaring
-    the database columns
-    '''
 
+class UserModel(db.Model):
     __tablename__ = 'user'
 
     id = db.Column(db.Integer, primary_key=True)
@@ -28,13 +21,6 @@ class UserModel(db.Model):
     blogposts = db.relationship('BlogPostModel', backref='users', lazy=True)
 
     def __init__(self, data):
-        '''
-        takes in a json request body
-        and parses to instance attributes
-        password gets generated into a bcrypt
-        hash before storage
-        '''
-
         self.name = data.get('name')
         self.email = data.get('email')
         self.password = self._generate_hash(data.get('password'))
@@ -82,11 +68,8 @@ class UserModel(db.Model):
         return UserModel.query.get(id)
 
 
+# models/user.py
 class UserSchema(Schema):
-    '''
-    Schema for User Models
-    '''
-
     id = fields.Int(dump_only=True)
     name = fields.Str(required=True)
     email = fields.Email(required=True)

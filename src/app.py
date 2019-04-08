@@ -23,10 +23,4 @@ def create_app(env_name='development'):
     bcrypt.init_app(app)
     db.init_app(app)
 
-
-    @app.route('/', methods=['GET'])
-    def index():
-        '''example endpoint'''
-        return 'Test Successful'
-
     return app
