@@ -13,10 +13,6 @@ blogpost_schema = BlogPostSchema()
 @blogpost_api.route('/', methods=['POST'])
 @Auth.auth_required
 def create():
-    '''
-    Creates a blog post
-    '''
-
     req_data = request.get_json()
     req_data['owner_id'] = g.user['id']
     data, error = blogpost_schema.load(req_data)
@@ -44,7 +40,8 @@ def delete(id):
     post = BlogPostModel.get_one_blogpost(id)
 
     if not post:
-        return custom_response({'error': 'post not found'}, 404)
+        return custom_response({'error': 'post not found'},
+                               404)
 
     data = blogpost_schema.dump(post).data
     if data.get('owner_id') != g.user.get('id'):
@@ -52,7 +49,6 @@ def delete(id):
 
     post.delete()
     return custom_response({'message': 'deleted'}, 204)
-
 
 
 @blogpost_api.route('/', methods=['GET'])
@@ -70,10 +66,6 @@ def get_all():
 @blogpost_api.route('/<int:blogpost_id>')
 @Auth.auth_required
 def get_one(blogpost_id):
-    '''
-    Get one blog post by Id
-    if user is verified
-    '''
 
     post = BlogPostModel.get_one_blogpost(blogpost_id)
 
@@ -116,10 +108,6 @@ def update(blogpost_id):
 
 
 def custom_response(res, status_code):
-    '''
-    creates custom responses to
-    api requests on blog post api
-    '''
 
     return Response(
         mimetype='application/json',
