@@ -1,5 +1,6 @@
 
 from flask import Flask, jsonify
+from flask_cors import CORS
 
 from .config import app_config
 from .models import db, bcrypt
@@ -16,6 +17,8 @@ def create_app(env_name='development'):
 
     app.config.from_object(app_config[env_name])
     app.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = False
+
+    CORS(app)
 
     app.register_blueprint(user_blueprint, url_prefix='/api/v1/users')
     app.register_blueprint(blog_blueprint, url_prefix='/api/v1/blogpost')
