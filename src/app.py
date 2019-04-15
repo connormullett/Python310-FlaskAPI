@@ -28,6 +28,6 @@ def create_app(env_name='development'):
 
     @app.route('/', methods=['GET'])
     def health_check():
-        return jsonify({'status': 'success'}), 200
+        return jsonify({'status': 'bigger success'}), 200
 
     return app
