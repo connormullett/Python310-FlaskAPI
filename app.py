@@ -7,7 +7,7 @@ from flask_heroku import Heroku
 
 env_name = os.getenv('FLASK_ENV')
 app = create_app(env_name)
-# heroku = Heroku(app)
+heroku = Heroku(app)
 
 if __name__ == '__main__':
     app.run()
